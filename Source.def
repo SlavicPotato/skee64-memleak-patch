@@ -1,0 +1,4 @@
+LIBRARY "skee64-memleak-hotfix"
+EXPORTS
+    SKSEPlugin_Query
+    SKSEPlugin_Load
