@@ -42,7 +42,9 @@ namespace smp
 			return;
 		}
 
-		auto oper_del_addr = reinterpret_cast<std::uintptr_t>(handle) + OPERATOR_DELETE_RVA;
+		auto base = reinterpret_cast<std::uintptr_t>(handle);
+
+		auto oper_del_addr = base + OPERATOR_DELETE_RVA;
 
 		if (!Patching::validate_mem(oper_del_addr, { 0xE9, 0x8F, 0x0E, 0x00, 0x00 }))
 		{
@@ -54,7 +56,7 @@ namespace smp
 
 		/* this lunacy prevents false positives from some particularly idiotic AV software
 		
-			apparently VirtualProtect calls w/o much else in the binary are enough to flag it as malicious
+			apparently VirtualProtect calls without much else in the binary are enough to flag it as malicious
 		*/
 		auto vprotect = GetVirtualProtect();
 		if (!vprotect)
@@ -63,9 +65,9 @@ namespace smp
 			return;
 		}
 
-		auto target_addr = reinterpret_cast<std::uintptr_t>(handle) + NIOVTaskDeferredMask_VTBL_RVA + sizeof(std::uintptr_t);
+		auto target_addr = base + NIOVTaskDeferredMask_VTBL_RVA + sizeof(std::uintptr_t);
 
-		gLog.Message("detouring NIOVTaskDeferredMask::Dispose @%.16llX + 0x8", target_addr);
+		gLog.Message("detouring NIOVTaskDeferredMask::Dispose @%.16llX", target_addr);
 
 		DWORD oldProtect;
 
